@@ -13,8 +13,5 @@ public class CurveUtils {
     public static double calcBernstein(int n, int k, double t) {
         return calcCombination(n,k)*Math.pow(t,k)*Math.pow(1-t,n-k);
     }
-
-
-
 }
 

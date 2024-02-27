@@ -36,6 +36,7 @@ public class ProtoCurveController {
     private void handlePrimaryClick(GraphicsContext graphicsContext, MouseEvent event) {
         final Point2D clickPoint = new Point2D(event.getX(), event.getY());
 
+        graphicsContext.setLineWidth(2*SPLINE_POINT_RADIUS);
 
         points.add(clickPoint);
         graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -47,16 +48,22 @@ public class ProtoCurveController {
         }
 
         if (points.size() > 2) {
-            double t = 0;
+            double prevX, prevY;
+            double t = STEP;
+            double drawingX = points.get(0).getX();
+            double drawingY = points.get(0).getY();
 
             while (t <= 1) {
-                double drawingX = 0;
-                double drawingY = 0;
+                prevX = drawingX;
+                prevY = drawingY;
+                drawingX = 0;
+                drawingY = 0;
                 for (int i = 0; i < points.size(); i++) {
                     double bern = CurveUtils.calcBernstein(points.size()-1, i , t);
                     drawingX += bern * points.get(i).getX();
                     drawingY += bern * points.get(i).getY();
                 }
+                graphicsContext.strokeLine(prevX, prevY, drawingX, drawingY);
                 graphicsContext.fillOval(
                         drawingX - SPLINE_POINT_RADIUS, drawingY - SPLINE_POINT_RADIUS,
                         2 * SPLINE_POINT_RADIUS, 2 * SPLINE_POINT_RADIUS);
@@ -64,14 +71,8 @@ public class ProtoCurveController {
 
                 t += STEP;
             }
+            graphicsContext.strokeLine(drawingX, drawingY, points.get(points.size()-1).getX(), points.get(points.size()-1).getY());
 
         }
-
-
-//        if (points.size() > 0) {
-//            final Point2D lastPoint = points.get(points.size() - 1);
-//            graphicsContext.strokeLine(lastPoint.getX(), lastPoint.getY(), clickPoint.getX(), clickPoint.getY());
-//        }
-
     }
 }
